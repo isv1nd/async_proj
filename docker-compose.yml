@@ -1,0 +1,26 @@
+version: "2"
+services:
+  async_proj_api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/code
+    ports:
+      - "9001:9001"
+    env_file:
+      - docker/postgres.env
+    depends_on:
+      - async_proj_postgres_db
+    links:
+      - async_proj_postgres_db:postgres
+  async_proj_postgres_db:
+    image: postgres:10.4
+    volumes:
+      - postgre_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file: docker/postgres.env
+
+volumes:
+  postgre_data:

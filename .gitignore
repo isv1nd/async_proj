@@ -1,0 +1,69 @@
+# Python related files
+
+*.dat
+*.egg
+*.egg-info
+*.py[cod]
+.eggs
+TAGS
+build
+
+# Test related files
+
+*.log
+*.sqlite3
+.coverage
+.coverage.*
+.testrepository/*
+.tox
+.venv
+cover
+celerybeat-schedule
+flake8_results.html
+htmlcov/
+venv
+env
+
+# Eclipse
+.project
+.pydevproject
+.settings
+
+# Editors
+*~
+.*.swp
+
+# PyCharm
+.idea/
+.pytest_cache/
+
+# Rope
+.ropeproject/
+
+# Codimension
+*.cdm
+
+# Node.js
+.nenv
+
+webclient/node_modules
+webclient/package-lock.json
+
+webserver/node_modules
+webserver/package-lock.json
+webserver/assets
+
+reports
+
+# vscode
+.vscode
+
+# compiled css
+client/src/assets/css/
+
+# compiled js
+client/src/app_admin/dist/
+
+sys
+
+.dappfile.render.yaml
