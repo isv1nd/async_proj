@@ -1,0 +1,12 @@
+version: "2"
+services:
+  functional_tests:
+    build:
+      context: .
+      dockerfile: functional_tests/docker/Dockerfile
+    volumes:
+      - .:/code
+    environment:
+      - API_URL=http://async_proj_api:9001
+    depends_on:
+      - async_proj_api

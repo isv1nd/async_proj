@@ -1,6 +1,7 @@
 version: "2"
 services:
   async_proj_api:
+    image: async_proj_api_dev
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -14,6 +15,7 @@ services:
       - async_proj_postgres_db
     links:
       - async_proj_postgres_db:postgres
+    command: bash -c "alembic upgrade head && python -m aiohttp.web -H 0.0.0.0 -P 9001 app:init_func"
   async_proj_postgres_db:
     image: postgres:10.4
     volumes:
