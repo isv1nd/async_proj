@@ -6,7 +6,7 @@ metadata = sa.MetaData()
 users = sa.Table('users', metadata,
                  sa.Column('id', sa.Integer, primary_key=True),
                  sa.Column('name', sa.String(255)),
-                 sa.Column('birthday', sa.DateTime))
+                 sa.Column('birthday', sa.Date))
 
 emails = sa.Table('emails', metadata,
                   sa.Column('id', sa.Integer, primary_key=True),
