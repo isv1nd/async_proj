@@ -1,0 +1,8 @@
+version: "2"
+services:
+  unit_tests:
+    build:
+      context: .
+      dockerfile: docker/DockerfileUnitTests
+    volumes:
+      - .:/code

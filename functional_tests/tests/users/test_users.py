@@ -2,13 +2,15 @@ import pytest
 from hamcrest import *
 
 
-class TestUsers(object):
-    @pytest.fixture(autouse=True)
-    async def clean_up(self, api):
-        yield
-        resources_list = ['users']
-        await api.clean_resource_instances(resources_list)
+@pytest.fixture
+async def clean_up_users(api):
+    yield
+    resources_list = ['users']
+    await api.clean_resource_instances(resources_list)
 
+
+@pytest.mark.usefixtures('clean_up_users')
+class TestUsers:
     async def test_users_list(self, client, api):
         created_data = await api.users.create()
         list_data = await api.users.get_list()
