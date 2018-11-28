@@ -1,11 +1,23 @@
+import abc
+
 from aiohttp import web
 from webargs.aiohttpparser import use_args
 from api.v1.schemes import users
 from services.storage.sa import users as users_service
-from api.v1.views import abstract
+from services.storage import abstract
 
 
-class BaseUserView(abstract.AbstractUserView):
+class AbstractUserView(web.View, metaclass=abc.ABCMeta):
+    def __init__(self, request):
+        super().__init__(request)
+        self.user_storage_service = self._construct_db_service()
+
+    @abc.abstractmethod
+    def _construct_db_service(self) -> abstract.AbstractUserStorageService:
+        pass
+
+
+class BaseUserView(AbstractUserView):
     def _construct_db_service(self):
         return users_service.UserStorageService(db_engine=self.request.app['db'])
 
