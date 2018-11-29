@@ -24,7 +24,7 @@ class BaseResource:
         status_code, response_data, headers = \
             await self.client.post(self.base_url, data=created_data)
 
-        assert expected_status_code == status_code
+        assert_that(status_code, equal_to(expected_status_code))
 
         if status_code == 201:
             matcher = {key: equal_to(value)

@@ -1,14 +1,26 @@
 from services.storage import base_exceptions
 from services.storage import abstract
+from psycopg2 import IntegrityError
 from db import tables
 
 
 class UserStorageService(abstract.AbstractUserStorageService):
     async def create_user(self, data: dict) -> dict:
         async with self._db_engine.acquire() as conn:
-            result = await conn.execute(tables.users.insert().values(data))
-            data.update(id=next(iter(result))[0])
-            return data
+            async with conn.begin() as transaction:
+                try:
+                    result = await conn.execute(tables.users.insert().values(data))
+                    id_ = next(iter(result))[0]
+                    return_data = \
+                        await conn.execute(tables.users.select().where(tables.users.c.id == id_))
+                    transaction.commit()
+                except Exception as exc:
+                    transaction.rollback()
+                    if isinstance(exc, IntegrityError) and \
+                            "unique" in str(exc).lower():
+                        raise base_exceptions.ObjectDuplication
+                    raise
+            return next(iter(return_data))
 
     async def get_users(self) -> list:
         async with self._db_engine.acquire() as conn:

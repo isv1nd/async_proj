@@ -1,10 +1,16 @@
 from __future__ import with_statement
+import sys
+import os
+base_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..")
+sys.path.append(base_path)
+
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 from db.tables import metadata
 from utils import db as db_utils
 import time
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

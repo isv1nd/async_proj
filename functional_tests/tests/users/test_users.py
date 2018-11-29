@@ -21,8 +21,13 @@ class TestUsers:
         await api.users.create()
 
     async def test_create_user_return_422_if_data_is_invalid(self, api):
-        await api.users.create(data=dict(birthday='Invalid date'),
+        await api.users.create(data=dict(email='Invalid'),
                                expected_status_code=422)
+
+    async def test_create_user_return_409_if_data_duplicated(self, api):
+        first_user_data = await api.users.create()
+        await api.users.create(data=dict(email=first_user_data['email']),
+                               expected_status_code=409)
 
     async def test_get_user_by_id(self, api):
         created_data = await api.users.create()

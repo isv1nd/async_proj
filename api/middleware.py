@@ -24,6 +24,9 @@ async def error_middleware(request, handler):
     except base_exceptions.ObjectNotFoundException:
         message = "Object not found"
         status = 404
+    except base_exceptions.ObjectDuplication:
+        message = "Object duplication"
+        status = 409
     except Exception as exc:
         LOG.exception(exc)
         message = "Server error occurred"

@@ -5,8 +5,10 @@ from marshmallow import validate
 
 class UserSchema(schema.Schema):
     id = fields.Int(required=False, dump_only=True)
-    name = fields.Str(required=True, validate=[validate.Length(min=1, max=255)])
-    birthday = fields.Date(required=True)
+    email = fields.Str(
+        required=True, validate=[validate.Length(max=255), validate.Email()])
+    full_name = fields.Str(required=False, validate=[validate.Length(min=1, max=255)])
+    is_active = fields.Boolean(dump_only=True)
 
     class Meta:
         strict = True
