@@ -1,3 +1,5 @@
+from passlib.hash import sha256_crypt
+
 from services.storage import base_exceptions
 from services.storage import abstract
 from psycopg2 import IntegrityError
@@ -6,6 +8,8 @@ from db import tables
 
 class UserStorageService(abstract.AbstractUserStorageService):
     async def create_user(self, data: dict) -> dict:
+        data.update(pwd_hash=self._make_password_hash(data.pop("password")))
+
         async with self._db_engine.acquire() as conn:
             async with conn.begin() as transaction:
                 try:
@@ -40,3 +44,7 @@ class UserStorageService(abstract.AbstractUserStorageService):
             if not result.rowcount:
                 raise base_exceptions.ObjectNotFoundException
             await conn.execute(tables.users.delete().where(tables.users.c.id == user_id))
+
+    @staticmethod
+    def _make_password_hash(raw_password: str) -> str:
+        return sha256_crypt.hash(raw_password)

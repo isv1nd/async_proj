@@ -2,7 +2,9 @@ import typing
 
 import pytest
 from hamcrest import *
+from hamcrest.core.matcher import Matcher
 from .data_generators import *
+from .base import Client
 
 
 class BaseResource:
@@ -13,8 +15,8 @@ class BaseResource:
         self.client = client
 
     async def create(
-            self, data=None, expected_status_code=201
-    ):
+            self, data: dict=None, expected_status_code: int=201
+    ) -> dict:
         data = data or {}
 
         created_data = self.data_generator.create() \
@@ -27,24 +29,28 @@ class BaseResource:
         assert_that(status_code, equal_to(expected_status_code))
 
         if status_code == 201:
-            matcher = {key: equal_to(value)
-                       for key, value
-                       in created_data.items()}
-            matcher.update(id=is_(int))
-            assert_that(response_data, has_entries(**matcher))
+            matcher = self.get_matcher(created_data)
+            assert_that(response_data, matcher)
         return response_data
 
-    async def get_by_id(self, id_, expected_status_code=200):
+    def get_matcher(self, expected_data: dict) -> Matcher:
+        matchers = {key: equal_to(value)
+                    for key, value
+                    in expected_data.items()}
+        matchers.update(id=is_(int))
+        return has_entries(**matchers)
+
+    async def get_by_id(self, id_: int, expected_status_code: int=200) -> dict:
         status_code, data, _ = await self.client.get(f"{self.base_url}/{id_}")
         assert expected_status_code == status_code
         return data
 
-    async def get_list(self, expected_status_code=200):
+    async def get_list(self, expected_status_code: int=200) -> dict:
         status_code, data, headers = await self.client.get(self.base_url)
         assert expected_status_code == status_code
         return data
 
-    async def delete(self, id_, expected_status_code=204):
+    async def delete(self, id_: int, expected_status_code: int=204) -> None:
         status_code, _, _ = await self.client.delete(f"{self.base_url}/{id_}")
         assert expected_status_code == status_code
 
@@ -53,13 +59,17 @@ class UsersResource(BaseResource):
     base_url = "/users"
     data_generator = UsersFactory
 
+    def get_matcher(self, expected_data: dict) -> Matcher:
+        expected_data.pop("password")
+        return super().get_matcher(expected_data)
+
 
 class API:
-    def __init__(self, client):
+    def __init__(self, client: Client):
         self.client = client
         self.users = UsersResource(self.client)
 
-    async def clean_resource_instances(self, resources_list):
+    async def clean_resource_instances(self, resources_list: list) -> None:
         for resource_name in resources_list:
             resource = getattr(self, resource_name)
             for log_item in filter(
@@ -87,4 +97,3 @@ class API:
 @pytest.fixture
 def api(client):
     return API(client)
-
