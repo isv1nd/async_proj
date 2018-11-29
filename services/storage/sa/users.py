@@ -40,10 +40,29 @@ class UserStorageService(abstract.AbstractUserStorageService):
 
     async def delete_user_by_id(self, user_id: int) -> None:
         async with self._db_engine.acquire() as conn:
-            result = await conn.execute(tables.users.select().where(tables.users.c.id == user_id))
-            if not result.rowcount:
+            async with conn.begin() as transaction:
+                try:
+                    result = await conn.execute(tables.users.select().where(tables.users.c.id == user_id))
+                    if not result.rowcount:
+                        raise base_exceptions.ObjectNotFoundException
+                    await conn.execute(tables.users.delete().where(tables.users.c.id == user_id))
+                    transaction.commit()
+                except Exception:
+                    transaction.rollback()
+                    raise
+
+    async def get_user_by_credentials(self, email: str, password: str) -> dict:
+        async with self._db_engine.acquire() as conn:
+            result = await conn.execute(
+                tables.users.select().where(tables.users.c.email == email)
+            )
+            try:
+                user = next(iter(result))
+                if sha256_crypt.verify(user["password"], result):
+                    raise ValueError
+            except (StopIteration, ValueError):
                 raise base_exceptions.ObjectNotFoundException
-            await conn.execute(tables.users.delete().where(tables.users.c.id == user_id))
+            return user
 
     @staticmethod
     def _make_password_hash(raw_password: str) -> str:

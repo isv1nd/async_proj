@@ -21,3 +21,6 @@ class AbstractUserStorageService(metaclass=abc.ABCMeta):
     async def delete_user_by_id(self, user_id: int) -> None:
         pass
 
+    @abc.abstractmethod
+    async def get_user_by_credentials(self, email: str, password: str) -> dict:
+        pass
