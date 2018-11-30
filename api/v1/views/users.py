@@ -5,6 +5,8 @@ from webargs.aiohttpparser import use_args
 from api.v1.schemes import users
 from services.storage.sa import users as users_service
 from services.storage import abstract
+from api.v1.permissions.decorator import check_permissions
+from api.v1.permissions import base
 
 
 class AbstractUserView(web.View, metaclass=abc.ABCMeta):
@@ -24,6 +26,7 @@ class BaseUserView(AbstractUserView):
 
 class UsersView(BaseUserView):
     @use_args(users.UserSchema())
+    @check_permissions([base.IsAuthenticated])
     async def post(self, data):
         result = await self.user_storage_service.create_user(data)
 
@@ -32,6 +35,7 @@ class UsersView(BaseUserView):
             status=201
         )
 
+    @check_permissions([base.IsAuthenticated])
     async def get(self):
         result = await self.user_storage_service.get_users()
 
@@ -42,6 +46,7 @@ class UsersView(BaseUserView):
 
 
 class UsersDetailView(BaseUserView):
+    @check_permissions([base.IsAuthenticated])
     async def get(self):
         id_ = int(self.request.match_info['id'])
 
@@ -52,6 +57,7 @@ class UsersDetailView(BaseUserView):
             status=200
         )
 
+    @check_permissions([base.IsAuthenticated])
     async def delete(self):
         id_ = int(self.request.match_info['id'])
 

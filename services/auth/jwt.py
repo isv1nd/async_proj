@@ -3,6 +3,7 @@ import datetime
 import time
 
 import jwt
+import calendar
 
 from services.storage import abstract as storage_abstract
 from services.auth import abstract as auth_abstract
@@ -41,18 +42,18 @@ class JWTTokenAuthenticationService(auth_abstract.AbstractAuthenticationService)
 
         payload = {
             "user_id": user["id"],
-            "exp": time.mktime(
+            "exp": calendar.timegm(
                 datetime.datetime.utcnow().timetuple()
             ) + settings.JWT_TTL_SEC
         }
-        return jwt.encode(payload, settings.JWT_SECRET, settings.JWT_ALGORITHM)
+        return jwt.encode(payload, settings.JWT_SECRET, settings.JWT_ALGORITHM).decode()
 
     def _get_token_from_request(self) -> dict:
         try:
             scheme, token = self._request.headers.get(
                 settings.JWT_HEADER_NAME
             ).strip().split(' ')
-        except ValueError:
+        except AttributeError:
             raise auth_exceptions.CredentialsWereNotProvidedException
 
         if scheme != settings.JWT_TOKEN_SCHEME:

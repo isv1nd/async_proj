@@ -12,6 +12,8 @@ MAXSIZE = 5
 
 # AUTH
 
+AUTHENTICATION_CLASS = "services.auth.jwt.JWTTokenAuthenticationService"
+
 JWT_SECRET = os.environ.get("JWT_SECRET", "dev_secret")
 JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM", "HS256")
 JWT_TOKEN_SCHEME = os.environ.get("JWT_TOKEN_SCHEME", "Auth")

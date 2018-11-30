@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('full_name', sa.String(length=255), nullable=True),
     sa.Column('pwd_hash', sa.String(length=511), nullable=True),
-    sa.Column('is_active', sa.Boolean(), server_default='FALSE', nullable=False),
+    sa.Column('is_active', sa.Boolean(), server_default='TRUE', nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )

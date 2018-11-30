@@ -58,7 +58,7 @@ class UserStorageService(abstract.AbstractUserStorageService):
             )
             try:
                 user = next(iter(result))
-                if sha256_crypt.verify(user["password"], result):
+                if not sha256_crypt.verify(password, dict(user)["pwd_hash"]):
                     raise ValueError
             except (StopIteration, ValueError):
                 raise base_exceptions.ObjectNotFoundException

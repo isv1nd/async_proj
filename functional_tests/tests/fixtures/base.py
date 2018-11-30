@@ -79,3 +79,10 @@ async def client_session(loop):
 @fixture
 async def client(loop, client_session):
     return Client(client_session)
+
+
+@fixture
+async def clean_up_users(api):
+    yield
+    resources_list = ['users']
+    await api.clean_resource_instances(resources_list)

@@ -9,6 +9,6 @@ users = sa.Table(
     sa.Column('email', sa.String(255), nullable=False, unique=True),
     sa.Column('full_name', sa.String(255), nullable=True),
     sa.Column('pwd_hash', sa.String(511), nullable=True),
-    sa.Column('is_active', sa.Boolean, nullable=False, server_default='FALSE')
+    sa.Column('is_active', sa.Boolean, nullable=False, server_default='TRUE')
 )
 

@@ -5,7 +5,8 @@ from aiopg import sa
 import settings
 
 MIDDLEWARE_LIST = [
-    middleware.error_middleware
+    middleware.error_middleware,
+    middleware.auth_middleware,
 ]
 
 

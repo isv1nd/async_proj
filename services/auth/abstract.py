@@ -5,7 +5,7 @@ from services.auth import model
 from services.storage import abstract
 
 
-class AbstractAuthenticationService(metaclass=abc.ABC):
+class AbstractAuthenticationService(metaclass=abc.ABCMeta):
     def __init__(self, request: web_request.Request):
         self._request = request
         self._user_storage_service = self.get_user_storage_service()
