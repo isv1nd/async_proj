@@ -23,6 +23,8 @@ flake8_results.html
 htmlcov/
 venv
 env
+Pipfile
+Pipfile.lock
 
 # Eclipse
 .project
